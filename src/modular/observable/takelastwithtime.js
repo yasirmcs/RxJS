@@ -2,13 +2,8 @@
 
 var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
-var isScheduler = require('../scheduler').isScheduler;
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.defaultScheduler) {
-  require('../scheduler/defaultscheduler');
-}
+var Scheduler = require('../scheduler');
+var inherits = require('inherits');
 
 function TakeLastWithTimeObserver(o, d, s) {
   this._o = o;
@@ -51,6 +46,6 @@ TakeLastWithTimeObservable.prototype.subscribeCore = function (o) {
 };
 
 module.exports = function takeLastWithTime (source, duration, scheduler) {
-  isScheduler(scheduler) || (scheduler = global.Rx.defaultScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.async);
   return new TakeLastWithTimeObservable(source, duration, scheduler);
 };

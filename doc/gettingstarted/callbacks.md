@@ -1,6 +1,6 @@
 # Bridging to Callbacks #
 
-Besides events, other asynchronous data sources exist in the the web and server-side world. One of them is the the simple callback pattern which is frequently used in Node.js. In this design pattern, the arguments are passed to the function, and then a callback is usually the last parameter, which when executed, passes control to the inner scope with the data.  Node.js has a standard way of doing callbacks in which the the callback is called with the `Error` object first if there is an error, else null, and then the additional parameters from the callback.
+Besides events, other asynchronous data sources exist in the web and server-side world. One of them is the simple callback pattern which is frequently used in Node.js. In this design pattern, the arguments are passed to the function, and then a callback is usually the last parameter, which when executed, passes control to the inner scope with the data.  Node.js has a standard way of doing callbacks in which the callback is called with the `Error` object first if there is an error, else null, and then the additional parameters from the callback.
 
 ## Converting Callbacks to Observable Sequences ##
 
@@ -101,7 +101,7 @@ Rx.Observable.prototype.toNodeCallback = function (cb) {
 
 We could then take this and for example if we had an observable sequence which gets a value from a REST call and then convert it to Node.js style.
 
-```
+```js
 getData().toNodeCallback(function (err, data) {
 	if (err) { throw err; }
 	// Do something with the data

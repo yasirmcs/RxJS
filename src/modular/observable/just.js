@@ -3,12 +3,7 @@
 var ObservableBase = require('./observablebase');
 var Disposable = require('../disposable');
 var Scheduler = require('../scheduler');
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.immediateScheduler) {
-  require('../scheduler/immediatescheduler');
-}
+var inherits = require('inherits');
 
 function scheduleItem(s, state) {
   var value = state[0], observer = state[1];
@@ -27,12 +22,12 @@ inherits(JustObservable, ObservableBase);
 
 JustObservable.prototype.subscribeCore = function (o) {
   var state = [this._value, o];
-  return this._scheduler === global.Rx.immediateScheduler ?
+  return this._scheduler === Scheduler.immediate ?
     scheduleItem(null, state) :
     this._scheduler.schedule(state, scheduleItem);
 };
 
 module.exports = function just(value, scheduler) {
-  Scheduler.isScheduler(scheduler) || (scheduler = global.Rx.immediateScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.immediate);
   return new JustObservable(value, scheduler);
 };

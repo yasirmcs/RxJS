@@ -1,17 +1,13 @@
 'use strict';
 
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 var isFunction = require('../helpers/isfunction');
 var Observable  = require('../observable');
 var Disposable = require('../disposable');
 var AutoDetachObserver = require('../observer/autodetachobserver');
+var Scheduler = require('../scheduler');
 var tryCatchUtils = require('../internal/trycatchutils');
-var tryCatch = tryCatchUtils.tryCatch, thrower = tryCatchUtils.thrower;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.currentThreadScheduler) {
-  require('../scheduler/currentthreadscheduler');
-}
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj, thrower = tryCatchUtils.thrower;
 
 // Fix subscriber to check for undefined or function returned to decorate as Disposable
 function fixSubscriber(subscriber) {
@@ -22,7 +18,7 @@ function fixSubscriber(subscriber) {
 function setDisposable(s, state) {
   var ado = state[0], self = state[1];
   var sub = tryCatch(self.__subscribe).call(self, ado);
-  if (sub === global.Rx.errorObj && !ado.fail(sub.e)) { thrower(sub.e); }
+  if (sub === errorObj && !ado.fail(sub.e)) { thrower(sub.e); }
   ado.setDisposable(fixSubscriber(sub));
 }
 
@@ -37,8 +33,8 @@ inherits(AnonymousObservable, Observable);
 AnonymousObservable.prototype._subscribe = function (o) {
   var ado = new AutoDetachObserver(o), state = [ado, this];
 
-  if (global.Rx.currentThreadScheduler.scheduleRequired()) {
-    global.Rx.currentThreadScheduler.schedule(state, setDisposable);
+  if (Scheduler.queue.scheduleRequired()) {
+    Scheduler.queue.schedule(state, setDisposable);
   } else {
     setDisposable(null, state);
   }

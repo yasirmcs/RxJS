@@ -4,15 +4,11 @@ var ObservableBase = require('./observablebase');
 var fromPromise = require('./frompromise');
 var isPromise = require('../helpers/ispromise');
 var AbstractObserver = require('../observer/abstractobserver');
+var Scheduler = require('../scheduler');
 var BinaryDisposable = require('../binarydisposable');
 var SerialDisposable = require('../serialdisposable');
 var SingleAssignmentDisposable = require('../singleassignmentdisposable');
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.immediateScheduler) {
-  require('../scheduler/immediatescheduler');
-}
+var inherits = require('inherits');
 
 function OnErrorResumeNextObserver(state, recurse) {
   this._state = state;
@@ -53,7 +49,7 @@ OnErrorResumeNextObservable.prototype.subscribeCore = function (o) {
       o: o,
       sources: this.sources
     },
-    cancellable = global.Rx.immediateScheduler.scheduleRecursive(state, scheduleMethod);
+    cancellable = Scheduler.immediate.scheduleRecursive(state, scheduleMethod);
   return new BinaryDisposable(subscription, cancellable);
 };
 

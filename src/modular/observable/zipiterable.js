@@ -9,8 +9,9 @@ var identity = require('../helpers/identity');
 var isFunction = require('../helpers/isfunction');
 var isArrayLike = require('../helpers/isarraylike');
 var isIterable = require('../helpers/isiterable');
-var inherits = require('util').inherits;
-var tryCatch = require('../internal/trycatchutils').tryCatch;
+var inherits = require('inherits');
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
 
 function falseFactory() { return false; }
 function emptyArrayFactory() { return []; }
@@ -44,7 +45,7 @@ ZipIterableObserver.prototype.next = function (x) {
   if (this._s.q.every(notEmpty)) {
     var queuedValues = this._s.q.map(shiftEach),
         res = tryCatch(this._s.cb).apply(null, queuedValues);
-    if (res === global.Rx.errorObj) { return this._s.o.onError(res.e); }
+    if (res === errorObj) { return this._s.o.onError(res.e); }
     this._s.o.onNext(res);
   } else if (this._s.done.filter(notTheSame(this._i)).every(identity)) {
     this._s.o.onCompleted();

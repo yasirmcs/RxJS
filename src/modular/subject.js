@@ -6,7 +6,7 @@ var Observer = require('./observer');
 var InnerSubscription = require('./internal/innersubscription');
 var addProperties = require('./internal/addproperties');
 var cloneArray = require('./internal/clonearray');
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 
 /**
 *  Represents an object that is both an observable sequence as well as an observer.
@@ -40,7 +40,10 @@ addProperties(Subject.prototype, Observer.prototype, {
    * Indicates whether the subject has observers subscribed to it.
    * @returns {Boolean} Indicates whether the subject has observers subscribed to it.
    */
-  hasObservers: function () { return this.observers.length > 0; },
+  hasObservers: function () {
+    Disposable.checkDisposed(this);
+    return this.observers.length > 0;
+  },
   /**
    * Notifies all subscribed observers about the end of the sequence.
    */

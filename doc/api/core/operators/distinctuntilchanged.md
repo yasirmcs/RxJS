@@ -1,5 +1,5 @@
 ### `Rx.Observable.prototype.distinctUntilChanged([keySelector], [comparer])`
-[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/distinctuntilchanged.js "View in source")
+[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/distinctuntilchanged.js "View in source")
 
 Returns an observable sequence that contains only distinct contiguous elements according to the keySelector and the comparer.
 
@@ -49,11 +49,31 @@ var subscription = source.subscribe(
 // => Next: { value: 42 }
 // => Next: { value: 24 }
 // => Completed
+
+/* With comparer */
+var source = Rx.Observable.of({value: 42}, {value: 42}, {value: 24}, {value: 24})
+  .distinctUntilChanged(function (x) { return x.value; }, function (a,b) { return a !== b; });
+
+var subscription = source.subscribe(
+    function (x) {
+        console.dir('Next: ' + x.toString());
+    },
+    function (err) {
+        console.log('Error: ' + err);
+    },
+    function () {
+        console.log('Completed');
+    });
+
+// => Next: { value: 42 }
+// => Next: { value: 42 }
+// => Completed
 ```
+
 ### Location
 
 File:
-- [`/src/core/linq/observable/distinctuntilchanged.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/distinctuntilchanged.js)
+- [`/src/core/perf/operators/distinctuntilchanged.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/distinctuntilchanged.js)
 
 Dist:
 - [`rx.all.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/dist/rx.all.js)

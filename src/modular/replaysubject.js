@@ -4,14 +4,10 @@ var Disposable = require('./disposable');
 var Observable = require('./observable');
 var Observer = require('./observer');
 var ScheduledObserver = require('./observer/scheduledobserver');
+var Scheduler = require('./scheduler');
 var addProperties = require('./internal/addproperties');
 var cloneArray = require('./internal/clonearray');
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.currentThreadScheduler) {
-  require('../scheduler/currentthreadscheduler');
-}
+var inherits = require('inherits');
 
 var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
@@ -36,7 +32,7 @@ function createRemovableDisposable(subject, observer) {
 function ReplaySubject(bufferSize, windowSize, scheduler) {
   this.bufferSize = bufferSize == null ? MAX_SAFE_INTEGER : bufferSize;
   this.windowSize = windowSize == null ? MAX_SAFE_INTEGER : windowSize;
-  this.scheduler = scheduler || global.Rx.currentThreadScheduler;
+  this.scheduler = scheduler || Scheduler.queue;
   this.q = [];
   this.observers = [];
   this.isStopped = false;
@@ -74,6 +70,7 @@ addProperties(ReplaySubject.prototype, Observer.prototype, {
    * @returns {Boolean} Indicates whether the subject has observers subscribed to it.
    */
   hasObservers: function () {
+    Disposable.checkDisposed(this);
     return this.observers.length > 0;
   },
   _trim: function (now) {

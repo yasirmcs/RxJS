@@ -1,19 +1,17 @@
 ### `Rx.Observable.prototype.retryWhen(notifier)`
 [&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/retrywhen.js "View in source")
 
-Repeats the source observable sequence on error when the notifier emits a next value. If the source observable errors and the notifier completes, it will complete the source sequence
+Repeats the source observable sequence on error when the notifier emits a next value. If the source observable errors and the notifier completes, it will complete the source sequence.
 
 #### Arguments
 1. `notificationHandler` *(`Function`)*: A handler that is passed an observable sequence of errors raised by the source observable and returns
-and observable that either continues, completes or errors. This behavior is then applied to the source observable.
+an observable that either continues, completes or errors. This behavior is then applied to the source observable.
 
 #### Returns
 *(`Observable`)*: An observable sequence producing the elements of the given sequence repeatedly until it terminates successfully or is notified to error or complete.
 
-#### Example: delayed retry
+#### Example: Delayed retry
 ```js
-var count = 0;
-
 var source = Rx.Observable.interval(1000)
     .map(function(n) {
         if(n === 2) {
@@ -45,13 +43,11 @@ var subscription = source.subscribe(
 // 200 ms pass
 // => Next: 0
 // => Next: 1
-// => Error: 'ex'
+// => Completed
 ```
 
 #### Example: Erroring an observable after 2 failures
 ```js
-var count = 0;
-
 var source = Rx.Observable.interval(1000)
     .map(function(n) {
         if(n === 2) {
@@ -60,12 +56,12 @@ var source = Rx.Observable.interval(1000)
         return n;
     })
     .retryWhen(function(errors) {
-        return errors.scan(0, function(errorCount, err) {
+        return errors.scan(function(errorCount, err) {
             if(errorCount >= 2) {
                 throw err;
             }
             return errorCount + 1;
-        });
+        }, 0);
     });
 
 var subscription = source.subscribe(
@@ -83,13 +79,13 @@ var subscription = source.subscribe(
 // => Next: 1
 // => Next: 0
 // => Next: 1
+// => Next: 0
+// => Next: 1
 // => Error: 'ex'
 ```
 
 #### Example: Completing an observable after 2 failures
 ```js
-var count = 0;
-
 var source = Rx.Observable.interval(1000)
     .map(function(n) {
         if(n === 2) {
@@ -98,9 +94,9 @@ var source = Rx.Observable.interval(1000)
         return n;
     })
     .retryWhen(function(errors) {
-        return errors.scan(0, function(errorCount, err) {
+        return errors.scan(function(errorCount, err) {
             return errorCount + 1;
-        }).takeWhile(function(errorCount) {
+        }, 0).takeWhile(function(errorCount) {
             return errorCount < 2;
         });
     });
@@ -123,7 +119,7 @@ var subscription = source.subscribe(
 // => Completed
 ```
 
-An incrememntal back-off strategy for handling errors:
+#### Example: An incremental back-off strategy for handling errors
 ```js
 Rx.Observable.create(function (o) {
     console.log("subscribing");

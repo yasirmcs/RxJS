@@ -9,6 +9,7 @@ Note that this uses the library approaches for jQuery, Zepto, Backbone.Marionett
 1. `element` *(`Any`)*: The DOMElement, NodeList, jQuery element, Zepto Element, Angular element, Ember.js element or EventEmitter to attach a listener. For Backbone.Marionette this would be the application or an EventAggregator object.
 2. `eventName` *(`String`)*: The event name to attach the observable sequence.
 3. `[selector]` *(`Function`)*: A selector which takes the arguments from the event emitter so that you can return a single object.
+4. `[options]` *( `Object` )* An object of event listener options.
 
 #### Returns
 *(`Observable`)*: An observable sequence of events from the specified element and the specified event.
@@ -38,6 +39,7 @@ input.trigger('click');
 // => Next: Clicked!
 ```
 
+
 Using in Node.js with using an `EventEmitter` with a selector function (which is not required).
 
 ```js
@@ -49,7 +51,7 @@ var eventEmitter = new EventEmitter();
 var source = Rx.Observable.fromEvent(
   eventEmitter,
   'data',
-  function (foo, bar) { return { foo: bar, bar: bar }; });
+  function (foo, bar) { return { foo: foo, bar: bar }; });
 
 var subscription = source.subscribe(
   function (x) {

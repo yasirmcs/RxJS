@@ -135,7 +135,7 @@ declare module Rx {
         *  @param {Mixed} [oOrOnNext] The object that is to receive notifications or an action to invoke for each element in the observable sequence.
         *  @param {Function} [onError] Action to invoke upon exceptional termination of the observable sequence.
         *  @param {Function} [onCompleted] Action to invoke upon graceful termination of the observable sequence.
-        *  @returns {Diposable} A disposable handling the subscriptions and unsubscriptions.
+        *  @returns {Disposable} A disposable handling the subscriptions and unsubscriptions.
         */
         subscribe(observer: IObserver<T>): IDisposable;
         /**
@@ -143,7 +143,7 @@ declare module Rx {
         *  @param {Mixed} [oOrOnNext] The object that is to receive notifications or an action to invoke for each element in the observable sequence.
         *  @param {Function} [onError] Action to invoke upon exceptional termination of the observable sequence.
         *  @param {Function} [onCompleted] Action to invoke upon graceful termination of the observable sequence.
-        *  @returns {Diposable} A disposable handling the subscriptions and unsubscriptions.
+        *  @returns {Disposable} A disposable handling the subscriptions and unsubscriptions.
         */
         subscribe(onNext?: (value: T) => void, onError?: (exception: any) => void, onCompleted?: () => void): IDisposable;
     }
@@ -154,7 +154,7 @@ declare module Rx {
         *  @param {Mixed} [oOrOnNext] The object that is to receive notifications or an action to invoke for each element in the observable sequence.
         *  @param {Function} [onError] Action to invoke upon exceptional termination of the observable sequence.
         *  @param {Function} [onCompleted] Action to invoke upon graceful termination of the observable sequence.
-        *  @returns {Diposable} A disposable handling the subscriptions and unsubscriptions.
+        *  @returns {Disposable} A disposable handling the subscriptions and unsubscriptions.
         */
         subscribe(observer: IObserver<T>): IDisposable;
         /**
@@ -162,7 +162,7 @@ declare module Rx {
         *  @param {Mixed} [oOrOnNext] The object that is to receive notifications or an action to invoke for each element in the observable sequence.
         *  @param {Function} [onError] Action to invoke upon exceptional termination of the observable sequence.
         *  @param {Function} [onCompleted] Action to invoke upon graceful termination of the observable sequence.
-        *  @returns {Diposable} A disposable handling the subscriptions and unsubscriptions.
+        *  @returns {Disposable} A disposable handling the subscriptions and unsubscriptions.
         */
         subscribe(onNext?: (value: T) => void, onError?: (exception: any) => void, onCompleted?: () => void): IDisposable;
 
@@ -193,7 +193,7 @@ declare module Rx {
         *  @param {Mixed} [oOrOnNext] The object that is to receive notifications or an action to invoke for each element in the observable sequence.
         *  @param {Function} [onError] Action to invoke upon exceptional termination of the observable sequence.
         *  @param {Function} [onCompleted] Action to invoke upon graceful termination of the observable sequence.
-        *  @returns {Diposable} A disposable handling the subscriptions and unsubscriptions.
+        *  @returns {Disposable} A disposable handling the subscriptions and unsubscriptions.
         */
         forEach(observer: IObserver<T>): IDisposable;
 
@@ -202,7 +202,7 @@ declare module Rx {
         *  @param {Mixed} [oOrOnNext] The object that is to receive notifications or an action to invoke for each element in the observable sequence.
         *  @param {Function} [onError] Action to invoke upon exceptional termination of the observable sequence.
         *  @param {Function} [onCompleted] Action to invoke upon graceful termination of the observable sequence.
-        *  @returns {Diposable} A disposable handling the subscriptions and unsubscriptions.
+        *  @returns {Disposable} A disposable handling the subscriptions and unsubscriptions.
         */
         forEach(onNext?: (value: T) => void, onError?: (exception: any) => void, onCompleted?: () => void): IDisposable;
     }
@@ -969,7 +969,98 @@ declare module Rx {
         * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
         * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
         */
-        combineLatest<TOther, TResult>(souces: ObservableOrPromise<TOther>[], resultSelector: (firstValue: T, ...otherValues: TOther[]) => TResult): Observable<TResult>;
+        combineLatest<TOther, TResult>(sources: ObservableOrPromise<TOther>[], resultSelector: (firstValue: T, ...otherValues: TOther[]) => TResult): Observable<TResult>;
+
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        * This can be in the form of an argument list of observables or an array.
+        *
+        * @example
+        * 1 - obs = observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
+        */
+        combineLatest<T2>(second: ObservableOrPromise<T2>): Observable<[T, T2]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        * This can be in the form of an argument list of observables or an array.
+        *
+        * @example
+        * 1 - obs = observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
+        */
+        combineLatest<T2, T3>(second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>): Observable<[T, T2, T3]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        * This can be in the form of an argument list of observables or an array.
+        *
+        * @example
+        * 1 - obs = observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
+        */
+        combineLatest<T2, T3, T4>(second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>): Observable<[T, T2, T3, T4]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        * This can be in the form of an argument list of observables or an array.
+        *
+        * @example
+        * 1 - obs = observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
+        */
+        combineLatest<T2, T3, T4, T5>(second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>): Observable<[T, T2, T3, T4, T5]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        * This can be in the form of an argument list of observables or an array.
+        *
+        * @example
+        * 1 - obs = observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
+        */
+        combineLatest<T2, T3, T4, T5, T6>(second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>, sixth: ObservableOrPromise<T6>): Observable<[T, T2, T3, T4, T5, T6]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        * This can be in the form of an argument list of observables or an array.
+        *
+        * @example
+        * 1 - obs = observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
+        */
+        combineLatest<T2, T3, T4, T5, T6, T7>(second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>, sixth: ObservableOrPromise<T6>, seventh: ObservableOrPromise<T7>): Observable<[T, T2, T3, T4, T5, T6, T7]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        * This can be in the form of an argument list of observables or an array.
+        *
+        * @example
+        * 1 - obs = observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
+        */
+        combineLatest<T2, T3, T4, T5, T6, T7, T8>(second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>, sixth: ObservableOrPromise<T6>, seventh: ObservableOrPromise<T7>, eighth: ObservableOrPromise<T8>): Observable<[T, T2, T3, T4, T5, T6, T7, T8]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        * This can be in the form of an argument list of observables or an array.
+        *
+        * @example
+        * 1 - obs = observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
+        */
+        combineLatest<T2, T3, T4, T5, T6, T7, T8, T9>(second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>, sixth: ObservableOrPromise<T6>, seventh: ObservableOrPromise<T7>, eighth: ObservableOrPromise<T8>, ninth: ObservableOrPromise<T9>): Observable<[T, T2, T3, T4, T5, T6, T7, T8, T9]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        * This can be in the form of an argument list of observables or an array.
+        *
+        * @example
+        * 1 - obs = observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
+        */
+        combineLatest<TOther>(sources: ObservableOrPromise<TOther>[]): Observable<TOther[]>;
     }
 
     export interface ObservableStatic {
@@ -1053,7 +1144,89 @@ declare module Rx {
         * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
         * @returns {Observable} An observable sequence containing the result of combining elements of the sources using the specified result selector function.
         */
-        combineLatest<TOther, TResult>(souces: ObservableOrPromise<TOther>[], resultSelector: (...otherValues: TOther[]) => TResult): Observable<TResult>;
+        combineLatest<TOther, TResult>(sources: ObservableOrPromise<TOther>[], resultSelector: (...otherValues: TOther[]) => TResult): Observable<TResult>;
+
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        *
+        * @example
+        * 1 - obs = Rx.Observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing a list of elements of the sources.
+        */
+        combineLatest<T, T2>(first: ObservableOrPromise<T>, second: ObservableOrPromise<T2>): Observable<[T, T2]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        *
+        * @example
+        * 1 - obs = Rx.Observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing a list of elements of the sources.
+        */
+        combineLatest<T, T2, T3>(first: ObservableOrPromise<T>, second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>): Observable<[T, T2, T3]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        *
+        * @example
+        * 1 - obs = Rx.Observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing a list of elements of the sources.
+        */
+        combineLatest<T, T2, T3, T4>(first: ObservableOrPromise<T>, second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>): Observable<[T, T2, T3, T4]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        *
+        * @example
+        * 1 - obs = Rx.Observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing a list of elements of the sources.
+        */
+        combineLatest<T, T2, T3, T4, T5>(first: ObservableOrPromise<T>, second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>): Observable<[T, T2, T3, T4, T5]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        *
+        * @example
+        * 1 - obs = Rx.Observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing a list of elements of the sources.
+        */
+        combineLatest<T, T2, T3, T4, T5, T6>(first: ObservableOrPromise<T>, second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>, sixth: ObservableOrPromise<T6>): Observable<[T, T2, T3, T4, T5, T6]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        *
+        * @example
+        * 1 - obs = Rx.Observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing a list of elements of the sources.
+        */
+        combineLatest<T, T2, T3, T4, T5, T6, T7>(first: ObservableOrPromise<T>, second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>, sixth: ObservableOrPromise<T6>, seventh: ObservableOrPromise<T7>): Observable<[T, T2, T3, T4, T5, T6, T7]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        *
+        * @example
+        * 1 - obs = Rx.Observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing a list of elements of the sources.
+        */
+        combineLatest<T, T2, T3, T4, T5, T6, T7, T8>(first: ObservableOrPromise<T>, second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>, sixth: ObservableOrPromise<T6>, seventh: ObservableOrPromise<T7>, eighth: ObservableOrPromise<T8>): Observable<[T, T2, T3, T4, T5, T6, T7, T8]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        *
+        * @example
+        * 1 - obs = Rx.Observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing a list of elements of the sources.
+        */
+        combineLatest<T, T2, T3, T4, T5, T6, T7, T8, T9>(first: ObservableOrPromise<T>, second: ObservableOrPromise<T2>, third: ObservableOrPromise<T3>, fourth: ObservableOrPromise<T4>, fifth: ObservableOrPromise<T5>, sixth: ObservableOrPromise<T6>, seventh: ObservableOrPromise<T7>, eighth: ObservableOrPromise<T8>, ninth: ObservableOrPromise<T9>): Observable<[T, T2, T3, T4, T5, T6, T7, T8, T9]>;
+        /**
+        * Merges the specified observable sequences into one observable sequence by using the selector function whenever any of the observable sequences or Promises produces an element.
+        *
+        * @example
+        * 1 - obs = Rx.Observable.combineLatest(obs1, obs2, obs3, function (o1, o2, o3) { return o1 + o2 + o3; });
+        * 2 - obs = Rx.Observable.combineLatest([obs1, obs2, obs3], function (o1, o2, o3) { return o1 + o2 + o3; });
+        * @returns {Observable} An observable sequence containing a list of elements of the sources.
+        */
+        combineLatest<TOther>(sources: ObservableOrPromise<TOther>[]): Observable<TOther[]>;
     }
 
     export interface Observable<T> {

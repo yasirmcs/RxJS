@@ -2,8 +2,9 @@
 
 var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
-var tryCatch = require('../internal/trycatchutils').tryCatch;
-var inherits = require('util').inherits;
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
+var inherits = require('inherits');
 
 function TransduceObserver(o, xform) {
   this._o = o;
@@ -15,7 +16,7 @@ inherits(TransduceObserver, AbstractObserver);
 
 TransduceObserver.prototype.next = function (x) {
   var res = tryCatch(this._xform['@@transducer/step']).call(this._xform, this._o, x);
-  if (res === global.Rx.errorObj) { this._o.onError(res.e); }
+  if (res === errorObj) { this._o.onError(res.e); }
 };
 
 TransduceObserver.prototype.error = function (e) { this._o.onError(e); };

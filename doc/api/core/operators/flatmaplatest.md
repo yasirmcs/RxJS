@@ -1,5 +1,5 @@
 ### `Rx.Observable.prototype.flatMapLatest(selector, [thisArg])`
-[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/flatmaplatest.js "View in source")
+[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/flatmaplatest.js "View in source")
 
 Transform the items emitted by an Observable into Observables, and mirror those items emitted by the most-recently transformed Observable.
 
@@ -44,7 +44,7 @@ var subscription = source.subscribe(
 ### Location
 
 File:
-- [`/src/core/linq/observable/flatmaplatest.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/flatmaplatest.js)
+- [`/src/core/perf/operators/flatmaplatest.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/flatmaplatest.js)
 
 Dist:
 - [`rx.all.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/dist/rx.all.js)
@@ -66,4 +66,4 @@ NuGet Packages:
 - [`RxJS-Lite`](http://www.nuget.org/packages/RxJS-Lite/)
 
 Unit Tests:
-- [`/tests/observable/flatmaplatest.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/tests/observable/flatmaplatest.js)
+- None

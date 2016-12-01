@@ -2,12 +2,7 @@
 
 var ObservableBase = require('./observablebase');
 var Scheduler = require('../scheduler');
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.defaultScheduler) {
-  require('../scheduler/defaultscheduler');
-}
+var inherits = require('inherits');
 
 function IntervalObservable(period, scheduler) {
   this._period = period;
@@ -35,6 +30,6 @@ IntervalObservable.prototype.subscribeCore = function (o) {
 * @returns {Observable} An observable sequence that produces a value after each period.
 */
 module.exports = function interval (period, scheduler) {
-  Scheduler.isScheduler(scheduler) || (scheduler = global.Rx.defaultScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.async);
   return new IntervalObservable(period, scheduler);
 };

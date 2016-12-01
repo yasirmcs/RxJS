@@ -3,8 +3,9 @@
 var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
 var bindCallback = require('../internal/bindcallback');
-var tryCatch = require('../internal/trycatchutils').tryCatch;
-var inherits = require('util').inherits;
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
+var inherits = require('inherits');
 
 function SkipWhileObserver(o, p) {
   this._o = o;
@@ -19,7 +20,7 @@ inherits(SkipWhileObserver, AbstractObserver);
 SkipWhileObserver.prototype.next = function (x) {
   if (!this._r) {
     var res = tryCatch(this._p._fn)(x, this._i++, this._p);
-    if (res === global.Rx.errorObj) { return this._o.onError(res.e); }
+    if (res === errorObj) { return this._o.onError(res.e); }
     this._r = !res;
   }
   this._r && this._o.onNext(x);

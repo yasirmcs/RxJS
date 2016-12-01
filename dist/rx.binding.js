@@ -268,7 +268,7 @@
        * Indicates whether the subject has observers subscribed to it.
        * @returns {Boolean} Indicates whether the subject has observers subscribed to it.
        */
-      hasObservers: function () { return this.observers.length > 0; },
+      hasObservers: function () { checkDisposed(this); return this.observers.length > 0; },
       /**
        * Notifies all subscribed observers about the end of the sequence.
        */
@@ -386,9 +386,7 @@
        * Indicates whether the subject has observers subscribed to it.
        * @returns {Boolean} Indicates whether the subject has observers subscribed to it.
        */
-      hasObservers: function () {
-        return this.observers.length > 0;
-      },
+      hasObservers: function () { checkDisposed(this); return this.observers.length > 0; },
       _trim: function (now) {
         while (this.q.length > this.bufferSize) {
           this.q.shift();
@@ -518,6 +516,9 @@
 
     ConnectableObservable.prototype.connect = function () {
       if (!this._connection) {
+        if (this._subject.isStopped) {
+          return disposableEmpty;
+        }
         var subscription = this._source.subscribe(this._subject);
         this._connection = new ConnectDisposable(this, subscription);
       }

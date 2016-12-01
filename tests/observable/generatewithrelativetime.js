@@ -139,4 +139,29 @@
       onNext(207, 2));
   });
 
+  test('generateWithRelativeTime resultSelection', function() {
+
+    var scheduler = new TestScheduler();
+
+    var results = scheduler.startScheduler(function() {
+      return Observable.generateWithRelativeTime(0, function(x) {
+        return x < 3;
+      }, function(x) {
+        return x + 1;
+      }, function(x) {
+        return 2 * x + 1;
+      }, function() {
+        return 10;
+      }, scheduler);
+    });
+
+    results.messages.assertEqual(
+      onNext(211, 1),
+      onNext(221, 3),
+      onNext(231, 5),
+      onCompleted(231)
+    );
+
+  });
+
 }());

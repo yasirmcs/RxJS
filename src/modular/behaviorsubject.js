@@ -7,7 +7,7 @@ var InnerSubscription = require('./internal/innersubscription');
 var addProperties = require('./internal/addproperties');
 var cloneArray = require('./internal/clonearray');
 var thrower = require('./internal/trycatchutils').thrower;
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 
 /**
 *  Represents a value that changes over time.
@@ -55,7 +55,10 @@ addProperties(BehaviorSubject.prototype, Observer.prototype, {
    * Indicates whether the subject has observers subscribed to it.
    * @returns {Boolean} Indicates whether the subject has observers subscribed to it.
    */
-  hasObservers: function () { return this.observers.length > 0; },
+  hasObservers: function () {
+    Disposable.checkDisposed(this);
+    return this.observers.length > 0;
+  },
   /**
    * Notifies all subscribed observers about the end of the sequence.
    */

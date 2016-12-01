@@ -1,14 +1,10 @@
 'use strict';
 
 var ObservableBase = require('./observablebase');
-var tryCatch = require('../internal/trycatchutils').tryCatch;
-var isScheduler = require('../scheduler').isScheduler;
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.currentThreadScheduler) {
-  require('../scheduler/currentthreadscheduler');
-}
+var Scheduler = require('../scheduler');
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
+var inherits = require('inherits');
 
 function GenerateObservable(state, cndFn, itrFn, resFn, s) {
   this._initialState = state;
@@ -26,13 +22,13 @@ function scheduleRecursive(state, recurse) {
     state.first = false;
   } else {
     state.newState = tryCatch(state.self._itrFn)(state.newState);
-    if (state.newState === global.Rx.errorObj) { return state.o.onError(state.newState.e); }
+    if (state.newState === errorObj) { return state.o.onError(state.newState.e); }
   }
   var hasResult = tryCatch(state.self._cndFn)(state.newState);
-  if (hasResult === global.Rx.errorObj) { return state.o.onError(hasResult.e); }
+  if (hasResult === errorObj) { return state.o.onError(hasResult.e); }
   if (hasResult) {
     var result = tryCatch(state.self._resFn)(state.newState);
-    if (result === global.Rx.errorObj) { return state.o.onError(result.e); }
+    if (result === errorObj) { return state.o.onError(result.e); }
     state.o.onNext(result);
     recurse(state);
   } else {
@@ -45,12 +41,12 @@ GenerateObservable.prototype.subscribeCore = function (o) {
     o: o,
     self: this,
     first: true,
-    newState: this._initialState
+    newState: this._initialState,
   };
   return this._s.scheduleRecursive(state, scheduleRecursive);
 };
 
 module.exports = function generate (initialState, condition, iterate, resultSelector, scheduler) {
-  isScheduler(scheduler) || (scheduler = global.Rx.currentThreadScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.queue);
   return new GenerateObservable(initialState, condition, iterate, resultSelector, scheduler);
 };

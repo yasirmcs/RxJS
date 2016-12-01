@@ -1,7 +1,7 @@
 'use strict';
 
 var create = require('./observer/create');
-var isFunction = require('./helpers/isFunction');
+var isFunction = require('./helpers/isfunction');
 
 function Observable() { }
 
@@ -19,7 +19,7 @@ Observable.isObservable = function (o) {
  *  @param {Mixed} [oOrOnNext] The object that is to receive notifications or an action to invoke for each element in the observable sequence.
  *  @param {Function} [onError] Action to invoke upon exceptional termination of the observable sequence.
  *  @param {Function} [onCompleted] Action to invoke upon graceful termination of the observable sequence.
- *  @returns {Diposable} A disposable handling the subscriptions and unsubscriptions.
+ *  @returns {Disposable} A disposable handling the subscriptions and unsubscriptions.
  */
 Observable.prototype.subscribe = function (oOrOnNext, onError, onCompleted) {
   return this._subscribe(typeof oOrOnNext === 'object' ?

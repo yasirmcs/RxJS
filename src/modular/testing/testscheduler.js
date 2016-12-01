@@ -5,9 +5,10 @@ var Disposable = require('../disposable');
 var HotObservable = require('./hotobservable');
 var MockObserver = require('./mockobserver');
 var MockPromise = require('./mockpromise');
+var MockDisposable = require('./mockdisposable');
 var ReactiveTest = require('./reactivetest');
 var VirtualTimeScheduler = require('../scheduler/virtualtimescheduler');
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 
 function baseComparer(x, y) { return x > y ? 1 : (x < y ? -1 : 0); }
 
@@ -152,6 +153,14 @@ TestScheduler.prototype.createRejectedPromise = function (ticks, reason) {
  */
 TestScheduler.prototype.createObserver = function () {
   return new MockObserver(this);
+};
+
+/**
+* Creates a disposable that records subscriptions and unsubscriptions.
+* @return A Disposable that has the absolute time for subscription and unsubscriptions.
+*/
+TestScheduler.prototype.createDisposable = function () {
+  return new MockDisposable(this);
 };
 
 module.exports = TestScheduler;

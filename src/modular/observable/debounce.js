@@ -2,20 +2,16 @@
 
 var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
+var Scheduler = require('../scheduler');
 var BinaryDisposable = require('../binarydisposable');
 var SerialDisposable = require('../serialdisposable');
 var SingleAssignmentDisposable = require('../singleassignmentdisposable');
 var fromPromise = require('./frompromise');
 var isPromise = require('../helpers/ispromise');
 var isFunction = require('../helpers/isfunction');
-var isScheduler = require('../scheduler').isScheduler;
-var tryCatch = require('../internal/trycatchutils').tryCatch;
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.defaultScheduler) {
-  require('../scheduler/defaultscheduler');
-}
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
+var inherits = require('inherits');
 
 function DebounceObserver(o, dt, scheduler, cancelable) {
   this._o = o;
@@ -57,7 +53,7 @@ DebounceObserver.prototype.completed = function () {
 };
 
 function DebounceObservable(source, dt, s) {
-  isScheduler(s) || (s = global.Rx.defaultScheduler);
+  Scheduler.isScheduler(s) || (s = Scheduler.async);
   this.source = source;
   this._dt = dt;
   this._s = s;
@@ -82,7 +78,7 @@ inherits(DebounceSelectorObserver, AbstractObserver);
 
 DebounceSelectorObserver.prototype.next = function (x) {
   var throttle = tryCatch(this._s.fn)(x);
-  if (throttle === global.Rx.errorObj) { return this._s.o.onError(throttle.e); }
+  if (throttle === errorObj) { return this._s.o.onError(throttle.e); }
 
   isPromise(throttle) && (throttle = fromPromise(throttle));
 

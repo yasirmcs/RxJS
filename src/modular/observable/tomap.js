@@ -2,8 +2,9 @@
 
 var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
-var tryCatch = require('../internal/trycatchutils').tryCatch;
-var inherits = require('util').inherits;
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
+var inherits = require('inherits');
 
 function ToMapObserver(o, k, e) {
   this._o = o;
@@ -17,11 +18,11 @@ inherits(ToMapObserver, AbstractObserver);
 
 ToMapObserver.prototype.next = function (x) {
   var key = tryCatch(this._k)(x);
-  if (key === global.Rx.errorObj) { return this._o.onError(key.e); }
+  if (key === errorObj) { return this._o.onError(key.e); }
   var elem = x;
   if (this._e) {
     elem = tryCatch(this._e)(x);
-    if (elem === global.Rx.errorObj) { return this._o.onError(elem.e); }
+    if (elem === errorObj) { return this._o.onError(elem.e); }
   }
 
   this._m.set(key, elem);

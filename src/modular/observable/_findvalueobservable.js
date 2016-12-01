@@ -3,8 +3,9 @@
 var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
 var bindCallback = require('../internal/bindcallback');
-var tryCatch = require('../internal/trycatchutils').tryCatch;
-var inherits = require('util').inherits;
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
+var inherits = require('inherits');
 
 function FindValueObserver(observer, source, callback, yieldIndex) {
   this._o = observer;
@@ -19,7 +20,7 @@ inherits(FindValueObserver, AbstractObserver);
 
 FindValueObserver.prototype.next = function (x) {
   var shouldRun = tryCatch(this._cb)(x, this._i, this._s);
-  if (shouldRun === global.Rx.errorObj) { return this._o.onError(shouldRun.e); }
+  if (shouldRun === errorObj) { return this._o.onError(shouldRun.e); }
   if (shouldRun) {
     this._o.onNext(this._y ? this._i : x);
     this._o.onCompleted();

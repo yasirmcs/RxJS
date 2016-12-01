@@ -1,17 +1,13 @@
 ### `Rx.Observable.prototype.finally(action)`
-[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/finally.js "View in source")
+[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/finally.js "View in source")
 
 Invokes a specified action after the source observable sequence terminates gracefully or exceptionally.  There is an alias called `finallyAction` for browsers <IE9
 
 #### Arguments
-1. `predicate` *(`Function`)*: A function to test each source element for a condition;  The callback is called with the following information:
-    1. the value of the element
-    2. the index of the element
-    3. the Observable object being subscribed
-2. `[thisArg]` *(`Any`)*: Object to use as `this` when executing the predicate.
+1. `action` *(`Function`)*: A function to invoke after the source observable sequence terminates.
 
 #### Returns
-*(`Observable`)*: An observable sequence that contains elements from the input sequence that satisfy the condition.
+*(`Observable`)*: The source sequence with the side-effecting behavior applied.
 
 #### Example
 ```js
@@ -37,7 +33,7 @@ var subscription = source.subscribe(
 ### Location
 
 File:
-- [`/src/core/linq/observable/finally.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/finally.js)
+- [`/src/core/perf/operators/finally.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/finally.js)
 
 Dist:
 - [`rx.all.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/dist/rx.all.js)

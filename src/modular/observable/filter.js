@@ -3,8 +3,9 @@
 var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
 var bindCallback = require('../internal/bindcallback');
-var inherits = require('util').inherits;
-var tryCatch = require('../internal/trycatchutils').tryCatch;
+var inherits = require('inherits');
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
 
 function FilterObserver(o, predicate, source) {
   this._o = o;
@@ -18,7 +19,7 @@ inherits(FilterObserver, AbstractObserver);
 
 FilterObserver.prototype.next = function(x) {
   var shouldYield = tryCatch(this._fn)(x, this._i++, this.source);
-  if (shouldYield === global.Rx.errorObj) {
+  if (shouldYield === errorObj) {
     return this._o.onError(shouldYield.e);
   }
   shouldYield && this._o.onNext(x);

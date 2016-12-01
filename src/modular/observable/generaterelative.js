@@ -1,14 +1,10 @@
 'use strict';
 
 var ObservableBase = require('./observablebase');
-var tryCatch = require('../internal/trycatchutils').tryCatch;
-var isScheduler = require('../scheduler').isScheduler;
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.defaultScheduler) {
-  require('../scheduler/defaultscheduler');
-}
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
+var Scheduler = require('../scheduler');
+var inherits = require('inherits');
 
 function GenerateRelativeObservable(state, cndFn, itrFn, resFn, timeFn, s) {
   this._state = state;
@@ -23,21 +19,21 @@ function GenerateRelativeObservable(state, cndFn, itrFn, resFn, timeFn, s) {
 inherits(GenerateRelativeObservable, ObservableBase);
 
 function scheduleRecursive(state, recurse) {
-  state.hasResult && state.o.onNext(state.newState);
+  state.hasResult && state.o.onNext(state.result);
 
   if (state.first) {
     state.first = false;
   } else {
     state.newState = tryCatch(state.self._itrFn)(state.newState);
-    if (state.newState === global.Rx.errorObj) { return state.o.onError(state.newState.e); }
+    if (state.newState === errorObj) { return state.o.onError(state.newState.e); }
   }
   state.hasResult = tryCatch(state.self._cndFn)(state.newState);
-  if (state.hasResult === global.Rx.errorObj) { return state.o.onError(state.hasResult.e); }
+  if (state.hasResult === errorObj) { return state.o.onError(state.hasResult.e); }
   if (state.hasResult) {
-    var result = tryCatch(state.self._resFn)(state.newState);
-    if (result === global.Rx.errorObj) { return state.o.onError(result.e); }
+    state.result = tryCatch(state.self._resFn)(state.newState);
+    if (state.result === errorObj) { return state.o.onError(state.result.e); }
     var time = tryCatch(state.self._timeFn)(state.newState);
-    if (time === global.Rx.errorObj) { return state.o.onError(time.e); }
+    if (time === errorObj) { return state.o.onError(time.e); }
     recurse(state, time);
   } else {
     state.o.onCompleted();
@@ -50,12 +46,12 @@ GenerateRelativeObservable.prototype.subscribeCore = function (o) {
     self: this,
     newState: this._state,
     first: true,
-    hasValue: false
+    hasResult: false
   };
   return this._s.scheduleRecursiveFuture(state, 0, scheduleRecursive);
 };
 
 module.exports = function generateRelative (initialState, condition, iterate, resultSelector, timeSelector, scheduler) {
-  isScheduler(scheduler) || (scheduler = global.Rx.defaultScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.async);
   return new GenerateRelativeObservable(initialState, condition, iterate, resultSelector, timeSelector, scheduler);
 };

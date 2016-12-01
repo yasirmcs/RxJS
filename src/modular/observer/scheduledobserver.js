@@ -2,9 +2,9 @@
 
 var AbstractObserver = require('./abstractobserver');
 var SerialDisposable = require('../serialdisposable');
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 var tryCatchUtils = require('../internal/trycatchutils');
-var tryCatch = tryCatchUtils.tryCatch, thrower = tryCatchUtils.thrower;
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj, thrower = tryCatchUtils.thrower;
 
 function ScheduledObserver(scheduler, observer) {
   AbstractObserver.call(this);
@@ -43,7 +43,7 @@ function scheduleMethod(state, recurse) {
     return;
   }
   var res = tryCatch(work)();
-  if (res === global.Rx.errorObj) {
+  if (res === errorObj) {
     state.queue = [];
     state.hasFaulted = true;
     return thrower(res.e);

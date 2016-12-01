@@ -2,22 +2,15 @@
 
 var ObservableBase = require('./observablebase');
 var Scheduler = require('../scheduler');
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 
-global.Rx || (global.Rx = {});
-if (!global.Rx.currentThreadScheduler) {
-  require('../scheduler/currentthreadscheduler');
-}
-
-function scheduleMethod(o, args) {
-  return function loopRecursive (i, recurse) {
-    if (i < args.length) {
-      o.onNext(args[i]);
-      recurse(i + 1);
-    } else {
-      o.onCompleted();
-    }
-  };
+function scheduleRecursive(state, recurse) {
+  if (state.i < state.len) {
+    state.o.onNext(state.args[state.i++]);
+    recurse(state);
+  } else {
+    state.o.onCompleted();
+  }
 }
 
 function FromArrayObservable(args, scheduler) {
@@ -29,10 +22,16 @@ function FromArrayObservable(args, scheduler) {
 inherits(FromArrayObservable, ObservableBase);
 
 FromArrayObservable.prototype.subscribeCore = function (o) {
-  return this._scheduler.scheduleRecursive(0, scheduleMethod(o, this._args));
+  var state = {
+    i: 0,
+    args: this._args,
+    len: this._args.length,
+    o: o
+  };
+  return this._scheduler.scheduleRecursive(state, scheduleRecursive);
 };
 
 module.exports = function fromArray(array, scheduler) {
-  Scheduler.isScheduler(scheduler) || (scheduler = global.Rx.currentThreadScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.queue);
   return new FromArrayObservable(array, scheduler);
 };

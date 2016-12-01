@@ -4,8 +4,9 @@ var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
 var isFunction = require('../helpers/isfunction');
 var isEqual = require('../internal/isequal');
-var inherits = require('util').inherits;
-var tryCatch = require('../internal/trycatchutils').tryCatch;
+var inherits = require('inherits');
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
 
 function DistinctUntilChangedObserver(o, fn, cmp) {
   this._o = o;
@@ -22,11 +23,11 @@ DistinctUntilChangedObserver.prototype.next = function (x) {
   var key = x, comparerEquals;
   if (isFunction(this._fn)) {
     key = tryCatch(this._fn)(x);
-    if (key === global.Rx.errorObj) { return this._o.onError(key.e); }
+    if (key === errorObj) { return this._o.onError(key.e); }
   }
   if (this._hk) {
     comparerEquals = tryCatch(this._cmp)(this._k, key);
-    if (comparerEquals === global.Rx.errorObj) { return this._o.onError(comparerEquals.e); }
+    if (comparerEquals === errorObj) { return this._o.onError(comparerEquals.e); }
   }
   if (!this._hk || !comparerEquals) {
     this._hk = true;

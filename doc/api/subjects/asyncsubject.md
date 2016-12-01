@@ -13,7 +13,7 @@ var subject = new Rx.AsyncSubject();
 
 var i = 0;
 var handle = setInterval(function () {
-	subject.onNext(i)
+	subject.onNext(i);
 	if (++i > 3) {
 		subject.onCompleted();
 		clearInterval(handle);
@@ -64,7 +64,7 @@ var subject = new Rx.AsyncSubject();
 subject.onNext(42);
 subject.onCompleted();
 
-var subscription = source.subscribe(
+var subscription = subject.subscribe(
     function (x) {
         console.log('Next: ' + x);
     },

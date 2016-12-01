@@ -2,7 +2,7 @@
 
 var Scheduler = require('../scheduler');
 var Disposable = require('../disposable');
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 
 function ImmediateScheduler() {
   Scheduler.call(this);
@@ -14,5 +14,4 @@ ImmediateScheduler.prototype.schedule = function (state, action) {
   return Disposable._fixup(action(this, state));
 };
 
-global.Rx || (global.Rx = {});
-global.Rx.immediateScheduler = new ImmediateScheduler();
+module.exports = ImmediateScheduler;

@@ -4,8 +4,8 @@ var Scheduler = require('../scheduler');
 var ScheduledItem = require('./scheduleditem');
 var PriorityQueue = require('../internal/priorityqueue');
 var tryCatchUtils = require('../internal/trycatchutils');
-var tryCatch = tryCatchUtils.tryCatch, thrower = tryCatchUtils.thrower;
-var inherits = require('util').inherits;
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj, thrower = tryCatchUtils.thrower;
+var inherits = require('inherits');
 
 function CurrentThreadScheduler() {
   Scheduler.call(this);
@@ -31,7 +31,7 @@ CurrentThreadScheduler.prototype.schedule = function (state, action) {
 
     var result = tryCatch(runTrampoline)();
     CurrentThreadScheduler.queue = null;
-    if (result === global.Rx.errorObj) { thrower(result.e); }
+    if (result === errorObj) { thrower(result.e); }
   } else {
     CurrentThreadScheduler.queue.enqueue(si);
   }
@@ -40,5 +40,4 @@ CurrentThreadScheduler.prototype.schedule = function (state, action) {
 
 CurrentThreadScheduler.prototype.scheduleRequired = function () { return !CurrentThreadScheduler.queue; };
 
-global.Rx || (global.Rx = {});
-global.Rx.currentThreadScheduler = new CurrentThreadScheduler();
+module.exports = CurrentThreadScheduler;

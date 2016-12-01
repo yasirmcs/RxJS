@@ -2,7 +2,7 @@
 
 var ObservableBase = require('./observablebase');
 var Scheduler = require('../scheduler');
-var inherits = require('util').inherits;
+var inherits = require('inherits');
 
 function scheduleMethod(o, obj, keys) {
   return function loopRecursive(i, recurse) {
@@ -30,6 +30,6 @@ PairsObservable.prototype.subscribeCore = function (o) {
 };
 
 module.exports = function pairs(obj, scheduler) {
-  Scheduler.isScheduler(scheduler) || (scheduler = global.Rx.currentThreadScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.queue);
   return new PairsObservable(obj, scheduler);
 };

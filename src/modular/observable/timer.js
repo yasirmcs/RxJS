@@ -4,12 +4,7 @@ var ObservableBase = require('./observablebase');
 var defer = require('./defer');
 var interval = require('./interval');
 var Scheduler = require('../scheduler');
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.defaultScheduler) {
-  require('../scheduler/defaultscheduler');
-}
+var inherits = require('inherits');
 
 function TimerObservable(dt, s) {
   this._dt = dt;
@@ -74,7 +69,7 @@ function timerRelativeAndPeriod(dt, period, scheduler) {
  */
 module.exports = function timer (dueTime, periodOrScheduler, scheduler) {
   var period;
-  Scheduler.isScheduler(scheduler) || (scheduler = global.Rx.defaultScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.async);
   if (periodOrScheduler != null && typeof periodOrScheduler === 'number') {
     period = periodOrScheduler;
   } else if (Scheduler.isScheduler(periodOrScheduler)) {
@@ -84,7 +79,7 @@ module.exports = function timer (dueTime, periodOrScheduler, scheduler) {
     return new TimerObservable(dueTime, scheduler);
   }
   if (dueTime instanceof Date && period !== undefined) {
-    return new TimerPeriodObservable(dueTime.getTime(), periodOrScheduler, scheduler);
+    return new TimerPeriodObservable(dueTime, periodOrScheduler, scheduler);
   }
   return timerRelativeAndPeriod(dueTime, period, scheduler);
 };

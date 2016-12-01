@@ -4,8 +4,9 @@ var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
 var bindCallback = require('../internal/bindcallback');
 var isFunction = require('../helpers/isfunction');
-var inherits = require('util').inherits;
-var tryCatch = require('../internal/trycatchutils').tryCatch;
+var inherits = require('inherits');
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
 
 function MapObserver(o, selector, source) {
   this._o = o;
@@ -19,7 +20,7 @@ inherits(MapObserver, AbstractObserver);
 
 MapObserver.prototype.next = function(x) {
   var result = tryCatch(this._fn)(x, this._i++, this._s);
-  if (result === global.Rx.errorObj) { return this._o.onError(result.e); }
+  if (result === errorObj) { return this._o.onError(result.e); }
   this._o.onNext(result);
 };
 

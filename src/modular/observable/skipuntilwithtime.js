@@ -3,13 +3,8 @@
 var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
 var BinaryDisposable = require('../binarydisposable');
-var isScheduler = require('../scheduler').isScheduler;
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.defaultScheduler) {
-  require('../scheduler/defaultscheduler');
-}
+var Scheduler = require('../scheduler');
+var inherits = require('inherits');
 
 function SkipUntilWithTimeObserver(o, p) {
   this._o = o;
@@ -45,6 +40,6 @@ SkipUntilWithTimeObservable.prototype.subscribeCore = function (o) {
 };
 
 module.exports = function skipUntilWithTime (source, startTime, scheduler) {
-  isScheduler(scheduler) || (scheduler = global.Rx.defaultScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.async);
   return new SkipUntilWithTimeObservable(source, startTime, scheduler);
 };

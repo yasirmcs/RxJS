@@ -5,8 +5,9 @@ var AbstractObserver = require('../observer/abstractobserver');
 var EmptyError = require('../internal/errors').EmptyError;
 var bindCallback = require('../internal/bindcallback');
 var isFunction = require('../helpers/isfunction');
-var tryCatch = require('../internal/trycatchutils').tryCatch;
-var inherits = require('util').inherits;
+var tryCatchUtils = require('../internal/trycatchutils');
+var tryCatch = tryCatchUtils.tryCatch, errorObj = tryCatchUtils.errorObj;
+var inherits = require('inherits');
 
 function LastObserver(o, obj, s) {
   this._o = o;
@@ -24,7 +25,7 @@ LastObserver.prototype.next = function (x) {
   var shouldYield = false;
   if (this._obj.predicate) {
     var res = tryCatch(this._obj.predicate)(x, this._i++, this._s);
-    if (res === global.Rx.errorObj) { return this._o.onError(res.e); }
+    if (res === errorObj) { return this._o.onError(res.e); }
     Boolean(res) && (shouldYield = true);
   } else if (!this._obj.predicate) {
     shouldYield = true;

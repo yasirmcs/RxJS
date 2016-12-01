@@ -785,7 +785,7 @@ var
       scheduleMethod = function (action) {
         var id = nextHandle++;
         tasksByHandle[id] = action;
-        root.postMessage(MSG_PREFIX + currentId, '*');
+        root.postMessage(MSG_PREFIX + id, '*');
         return id;
       };
     } else if (!!root.MessageChannel) {
@@ -879,6 +879,16 @@ var
       var disposable = new SingleAssignmentDisposable(),
           id = localSetTimeout(scheduleAction(disposable, action, this, state), dueTime);
       return new BinaryDisposable(disposable, new LocalClearDisposable(id));
+    };
+
+    function scheduleLongRunning(state, action, disposable) {
+      return function () { action(state, disposable); };
+    }
+
+    DefaultScheduler.prototype.scheduleLongRunning = function (state, action) {
+      var disposable = disposableCreate(noop);
+      scheduleMethod(scheduleLongRunning(state, action, disposable));
+      return disposable;
     };
 
     return DefaultScheduler;
@@ -1144,7 +1154,7 @@ var
      *  @param {Mixed} [oOrOnNext] The object that is to receive notifications or an action to invoke for each element in the observable sequence.
      *  @param {Function} [onError] Action to invoke upon exceptional termination of the observable sequence.
      *  @param {Function} [onCompleted] Action to invoke upon graceful termination of the observable sequence.
-     *  @returns {Diposable} A disposable handling the subscriptions and unsubscriptions.
+     *  @returns {Disposable} A disposable handling the subscriptions and unsubscriptions.
      */
     observableProto.subscribe = observableProto.forEach = function (oOrOnNext, onError, onCompleted) {
       return this._subscribe(typeof oOrOnNext === 'object' ?

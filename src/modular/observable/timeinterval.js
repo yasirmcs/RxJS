@@ -2,13 +2,8 @@
 
 var ObservableBase = require('./observablebase');
 var AbstractObserver = require('../observer/abstractobserver');
-var isScheduler = require('../scheduler').isScheduler;
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.defaultScheduler) {
-  require('../scheduler/defaultscheduler');
-}
+var Scheduler = require('../scheduler');
+var inherits = require('inherits');
 
 function TimeIntervalObserver(o, s) {
   this._o = o;
@@ -40,6 +35,6 @@ TimeIntervalObservable.prototype.subscribeCore = function (o) {
 };
 
 module.exports = function timeInterval (source, scheduler) {
-  isScheduler(scheduler) || (scheduler = global.Rx.defaultScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.async);
   return new TimeIntervalObservable(source, scheduler);
 };

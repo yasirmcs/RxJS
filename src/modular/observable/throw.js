@@ -3,12 +3,7 @@
 var ObservableBase = require('./observablebase');
 var Disposable = require('../disposable');
 var Scheduler = require('../scheduler');
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.immediateScheduler) {
-  require('../scheduler/immediatescheduler');
-}
+var inherits = require('inherits');
 
 function scheduleItem(s, state) {
   var e = state[0], o = state[1];
@@ -26,12 +21,12 @@ inherits(ThrowObservable, ObservableBase);
 
 ThrowObservable.prototype.subscribeCore = function (o) {
   var state = [this._error, o];
-  return this._scheduler === global.Rx.immediateScheduler ?
+  return this._scheduler === Scheduler.immediate ?
     scheduleItem(null, state) :
     this._scheduler.schedule(state, scheduleItem);
 };
 
 module.exports = function throwError(error, scheduler) {
-  Scheduler.isScheduler(scheduler) || (scheduler = global.Rx.immediateScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.immediate);
   return new ThrowObservable(error, scheduler);
 };

@@ -166,7 +166,7 @@
       return _observableTimer(dueTime, scheduler);
     }
     if (dueTime instanceof Date && period !== undefined) {
-      return observableTimerDateAndPeriod(dueTime.getTime(), periodOrScheduler, scheduler);
+      return observableTimerDateAndPeriod(dueTime, periodOrScheduler, scheduler);
     }
     return observableTimerTimeSpanAndPeriod(dueTime, period, scheduler);
   };
@@ -293,7 +293,7 @@
       }
 
       return new BinaryDisposable(subscription, delays);
-    }, this);
+    }, source);
   }
 
   /**
@@ -450,7 +450,7 @@
    * @param {Scheduler} [scheduler]  Scheduler to run windowing timers on. If not specified, the timeout scheduler is used.
    * @returns {Observable} An observable sequence of windows.
    */
-  observableProto.windowWithTime = function (timeSpan, timeShiftOrScheduler, scheduler) {
+  observableProto.windowWithTime = observableProto.windowTime = function (timeSpan, timeShiftOrScheduler, scheduler) {
     var source = this, timeShift;
     timeShiftOrScheduler == null && (timeShift = timeSpan);
     isScheduler(scheduler) || (scheduler = defaultScheduler);
@@ -530,7 +530,7 @@
    * @param {Scheduler} [scheduler]  Scheduler to run windowing timers on. If not specified, the timeout scheduler is used.
    * @returns {Observable} An observable sequence of windows.
    */
-  observableProto.windowWithTimeOrCount = function (timeSpan, count, scheduler) {
+  observableProto.windowWithTimeOrCount = observableProto.windowTimeOrCount = function (timeSpan, count, scheduler) {
     var source = this;
     isScheduler(scheduler) || (scheduler = defaultScheduler);
     return new AnonymousObservable(function (observer) {
@@ -593,7 +593,7 @@
    * @param {Scheduler} [scheduler]  Scheduler to run buffer timers on. If not specified, the timeout scheduler is used.
    * @returns {Observable} An observable sequence of buffers.
    */
-  observableProto.bufferWithTime = function (timeSpan, timeShiftOrScheduler, scheduler) {
+  observableProto.bufferWithTime = observableProto.bufferTime = function (timeSpan, timeShiftOrScheduler, scheduler) {
     return this.windowWithTime(timeSpan, timeShiftOrScheduler, scheduler).flatMap(toArray);
   };
 
@@ -606,7 +606,7 @@
    * @param {Scheduler} [scheduler]  Scheduler to run bufferin timers on. If not specified, the timeout scheduler is used.
    * @returns {Observable} An observable sequence of buffers.
    */
-  observableProto.bufferWithTimeOrCount = function (timeSpan, count, scheduler) {
+  observableProto.bufferWithTimeOrCount = observableProto.bufferTimeOrCount = function (timeSpan, count, scheduler) {
     return this.windowWithTimeOrCount(timeSpan, count, scheduler).flatMap(toArray);
   };
 
@@ -943,7 +943,7 @@
     }
 
     function scheduleRecursive(state, recurse) {
-      state.hasResult && state.o.onNext(state.newState);
+      state.hasResult && state.o.onNext(state.result);
 
       if (state.first) {
         state.first = false;
@@ -954,8 +954,8 @@
       state.hasResult = tryCatch(state.self._cndFn)(state.newState);
       if (state.hasResult === errorObj) { return state.o.onError(state.hasResult.e); }
       if (state.hasResult) {
-        var result = tryCatch(state.self._resFn)(state.newState);
-        if (result === errorObj) { return state.o.onError(result.e); }
+        state.result = tryCatch(state.self._resFn)(state.newState);
+        if (state.result === errorObj) { return state.o.onError(state.result.e); }
         var time = tryCatch(state.self._timeFn)(state.newState);
         if (time === errorObj) { return state.o.onError(time.e); }
         recurse(state, time);
@@ -970,7 +970,7 @@
         self: this,
         newState: this._state,
         first: true,
-        hasValue: false
+        hasResult: false
       };
       return this._s.scheduleRecursiveFuture(state, new Date(this._s.now()), scheduleRecursive);
     };
@@ -1015,7 +1015,7 @@
     }
 
     function scheduleRecursive(state, recurse) {
-      state.hasResult && state.o.onNext(state.newState);
+      state.hasResult && state.o.onNext(state.result);
 
       if (state.first) {
         state.first = false;
@@ -1023,11 +1023,12 @@
         state.newState = tryCatch(state.self._itrFn)(state.newState);
         if (state.newState === errorObj) { return state.o.onError(state.newState.e); }
       }
+
       state.hasResult = tryCatch(state.self._cndFn)(state.newState);
       if (state.hasResult === errorObj) { return state.o.onError(state.hasResult.e); }
       if (state.hasResult) {
-        var result = tryCatch(state.self._resFn)(state.newState);
-        if (result === errorObj) { return state.o.onError(result.e); }
+        state.result = tryCatch(state.self._resFn)(state.newState);
+        if (state.result === errorObj) { return state.o.onError(state.result.e); }
         var time = tryCatch(state.self._timeFn)(state.newState);
         if (time === errorObj) { return state.o.onError(time.e); }
         recurse(state, time);
@@ -1042,7 +1043,7 @@
         self: this,
         newState: this._state,
         first: true,
-        hasValue: false
+        hasResult: false
       };
       return this._s.scheduleRecursiveFuture(state, 0, scheduleRecursive);
     };

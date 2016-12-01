@@ -1,6 +1,6 @@
 ### `Rx.Observable.prototype.flatMapFirst(selector, [thisArg])`
 ### `Rx.Observable.prototype.selectSwitchFirst(selector, [thisArg])`
-[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/flatmapfirst.js "View in source")
+[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/flatmapfirst.js "View in source")
 
 Transform the items emitted by an Observable into Observables, and mirror those items emitted by the most-recently transformed Observable.
 
@@ -50,7 +50,7 @@ var subscription = source.subscribe(
 ### Location
 
 File:
-- [`/src/core/linq/observable/flatmapfirst.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/flatmapfirst.js)
+- [`/src/core/perf/operators/flatmapfirst.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/flatmapfirst.js)
 
 Dist:
 - [`rx.all.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/dist/rx.all.js)
@@ -68,4 +68,4 @@ NuGet Packages:
 - [`RxJS-Experimental`](http://www.nuget.org/packages/RxJS-Experimental/)
 
 Unit Tests:
-- [`/tests/observable/flatmapfirst.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/tests/observable/flatmapfirst.js)
+- None

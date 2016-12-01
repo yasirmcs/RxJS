@@ -3,12 +3,7 @@
 var AnonymousObservable = require('./observable/anonymousobservable');
 var Scheduler = require('./scheduler');
 var errors = require('./internal/errors');
-var inherits = require('util').inherits;
-
-global.Rx || (global.Rx = {});
-if (!global.Rx.immediateScheduler) {
-  require('./scheduler/immediatescheduler');
-}
+var inherits = require('inherits');
 
 function Notification() { }
 
@@ -42,7 +37,7 @@ Notification.prototype.accept = function (observerOrOnNext, onError, onCompleted
  */
 Notification.prototype.toObservable = function (scheduler) {
   var self = this;
-  Scheduler.isScheduler(scheduler) || (scheduler = global.Rx.immediateScheduler);
+  Scheduler.isScheduler(scheduler) || (scheduler = Scheduler.immediate);
   return new AnonymousObservable(function (o) {
     return scheduler.schedule(self, function (_, notification) {
       notification._acceptObserver(o);

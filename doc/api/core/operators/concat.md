@@ -1,5 +1,5 @@
 ### `Rx.Observable.concat(...args)`
-[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/concat.js "View in source")
+[&#x24C8;](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/concat.js "View in source")
 
 Concatenates all of the specified observable sequences, as long as the previous observable sequence terminated successfully.
 
@@ -57,7 +57,7 @@ var subscription = source.subscribe(
 ### Location
 
 File:
-- [`/src/core/linq/observable/concat.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/linq/observable/concat.js)
+- [`/src/core/perf/operators/concat.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/src/core/perf/operators/concat.js)
 
 Dist:
 - [`rx.all.js`](https://github.com/Reactive-Extensions/RxJS/blob/master/dist/rx.all.js)
